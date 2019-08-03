@@ -2,6 +2,8 @@ package com.example.dboperations
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.database.Cursor
 import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
@@ -12,6 +14,7 @@ import android.support.annotation.IntegerRes
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.example.utils.BroadCastReceiver
 import com.example.utils.DatabaseHelper
 import java.lang.Exception
 
@@ -23,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     var edtMark2: EditText? = null
     var edtTot: EditText? = null
     var total: Int = 0
+    var broadCr = BroadCastReceiver()
+    var intentfilter: IntentFilter = IntentFilter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         edtMark1 = findViewById<View>(R.id.edtTotMark1) as EditText
         edtMark2 = findViewById<View>(R.id.edtMark2) as EditText
         edtTot = findViewById<View>(R.id.edtTot) as EditText
+
+        intentfilter.addAction("com.android.CUSTOM_INTENT")
+        this.registerReceiver(broadCr, intentfilter)
     }
 
 
@@ -43,17 +51,23 @@ class MainActivity : AppCompatActivity() {
 //                r.setCharAt(i, '\u0000')
 //        }
 
-        total = 0
-        var a = Integer.parseInt(edtMark1?.text.toString())
-        var b = Integer.parseInt(edtMark2?.text.toString())
-        total = a + b
-        edtTot?.setText(total.toString())
 
-        if (databaseHelper?.dbInsert(edtUserName?.text.toString(), a, b, total)!!) {
-            Toast.makeText(this@MainActivity, "Insert Success", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this@MainActivity, "Insert Failed ", Toast.LENGTH_SHORT).show()
-        }
+        var i: Intent = Intent(this@MainActivity, BroadCastReceiver::class.java)
+        i.putExtra("BroadCast", "BDCR")
+        i.action = "com.android.CUSTOM_INTENT"
+        sendBroadcast(i)
+
+//        total = 0
+//        var a = Integer.parseInt(edtMark1?.text.toString())
+//        var b = Integer.parseInt(edtMark2?.text.toString())
+//        total = a + b
+//        edtTot?.setText(total.toString())
+//
+//        if (databaseHelper?.dbInsert(edtUserName?.text.toString(), a, b, total)!!) {
+//            Toast.makeText(this@MainActivity, "Insert Success", Toast.LENGTH_SHORT).show()
+//        } else {
+//            Toast.makeText(this@MainActivity, "Insert Failed ", Toast.LENGTH_SHORT).show()
+//        }
     }
 
     fun dbGetAllData(v: View) {
@@ -62,6 +76,17 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    fun update(view: View): Unit {
+        databaseHelper?.dbUpdate(13, "Selva")
+
+    }
+
+
+    override fun onDestroy() {
+        unregisterReceiver(broadCr)
+        super.onDestroy()
+    }
+
 //    fun dbDelete(v: View): Unit {
 //        val del: Int = databaseHelper?.dbDelete("2")!!
 //        if (del > 0)
@@ -69,12 +94,13 @@ class MainActivity : AppCompatActivity() {
 //        else
 //            Toast.makeText(this@MainActivity, "Data not Deleted", Toast.LENGTH_LONG).show()
 //    }
-//
-//
-//    fun dbUpdate(v: View): Unit {
-//
-//    }
-//
+
+
+    fun dbUpdate(v: View): Unit {
+
+
+    }
+
 //    fun dbView(v: View): Unit {
 //        var cur: Cursor = databaseHelper?.getAllTableData()!!
 //        try {

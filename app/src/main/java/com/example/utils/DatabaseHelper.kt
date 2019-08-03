@@ -36,8 +36,8 @@ class DatabaseHelper(var context: Context) :
 
     override fun onUpgrade(p0: SQLiteDatabase?, p1: Int, p2: Int) {
         try {
-//            p0?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-//            onCreate(p0)
+            p0?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+            onCreate(p0)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -56,16 +56,13 @@ class DatabaseHelper(var context: Context) :
 
 
         return if (id > -1) true else false
-
-//
-
     }
 
 
     fun getAllData(): Unit {
 
         val db: SQLiteDatabase = this.writableDatabase
-        var columns = arrayOf<String>(DatabaseHelper.UID, DatabaseHelper.NAME)
+        var columns = arrayOf<String>(DatabaseHelper.UID, DatabaseHelper.NAME, MARK1, MARK2, TOTAL)
         var cursor: Cursor = db.query(TABLE_NAME, columns, null, null, null, null, null)
         cursor.moveToFirst()
         if (cursor.count != 0 && cursor.moveToFirst()) {
@@ -73,13 +70,12 @@ class DatabaseHelper(var context: Context) :
             while (cursor.moveToNext()) {
                 val id: Int = cursor.getInt(cursor.getColumnIndex(UID))
                 val name = cursor.getString(cursor.getColumnIndex(NAME))
-//                var m1 = cursor.getString(cursor.getColumnIndex(MARK1))
-//                var m2 = cursor.getString(cursor.getColumnIndex(MARK2))
-//                var tot: String = cursor.getString(cursor.getColumnIndex(TOTAL))
+                var m1 = cursor.getString(cursor.getColumnIndex(MARK1))
+                var m2 = cursor.getString(cursor.getColumnIndex(MARK2))
+                var tot: String = cursor.getString(cursor.getColumnIndex(TOTAL))
 
-                Toast.makeText(context, " " + name + " ", Toast.LENGTH_SHORT).show()
-
-
+                Toast.makeText(context, " " + id + "  " + name + "  " + m1 + " " + m2 + " " + tot, Toast.LENGTH_SHORT)
+                    .show()
             }
 
         } else {
@@ -91,29 +87,47 @@ class DatabaseHelper(var context: Context) :
     }
 
 
-    fun dbSelectAll(na: String): Unit {
-        val db: SQLiteDatabase = this.writableDatabase
-        var columns = arrayOf<String>(DatabaseHelper.UID, DatabaseHelper.NAME)
-        var cursor: Cursor =
-            db.query(TABLE_NAME, columns, DatabaseHelper.NAME + "='" + na + "'", null, null, null, null, null)
+//    fun dbSelectAll(na: String): Unit {
+//        val db: SQLiteDatabase = this.writableDatabase
+//        var columns = arrayOf<String>(DatabaseHelper.UID, DatabaseHelper.NAME)
+//        var cursor: Cursor =
+//            db.query(TABLE_NAME, columns, DatabaseHelper.NAME + "='" + na + "'", null, null, null, null, null)
+//
+//        if (cursor.count != 0) {
+//            while (cursor.moveToNext()) {
+////                val index = cursor.getColumnIndex(UID)
+//                val id = cursor.getInt(cursor.getColumnIndex(UID))
+//                val Name = cursor.getString(cursor.getColumnIndex(NAME))
+//                Toast.makeText(
+//                    context, " ID : " + id + " Name :  " + Name,
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        } else {
+//            Toast.makeText(context, " No data Found", Toast.LENGTH_SHORT).show()
+//
+//        }
+//
+//    }
 
-        if (cursor.count != 0) {
-            while (cursor.moveToNext()) {
-//                val index = cursor.getColumnIndex(UID)
-                val id = cursor.getInt(cursor.getColumnIndex(UID))
-                val Name = cursor.getString(cursor.getColumnIndex(NAME))
-                Toast.makeText(
-                    context, " ID : " + id + " Name :  " + Name,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+
+    fun dbUpdate(id: Int, name: String): Unit {
+        var db: SQLiteDatabase = this.writableDatabase
+        var cv: ContentValues = ContentValues()
+        cv.put(NAME, name)
+
+
+        var i = db.update(TABLE_NAME, cv, UID + " =" + id, null)
+
+        if (i > 0) {
+            Toast.makeText(context, "Succ", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context, " No data Found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show()
 
         }
 
-    }
 
+    }
 
     fun dbDelete(id: String): Int {
         val db: SQLiteDatabase = this.writableDatabase
