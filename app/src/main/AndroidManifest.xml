@@ -4,6 +4,7 @@
           package="com.example.dboperations">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 
     <application
             android:allowBackup="true"
@@ -26,7 +27,7 @@
         <receiver android:name="com.example.utils.BroadCastReceiver">
             <intent-filter>
                 <action android:name="com.android.CUSTOM_INTENT"/>
-
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
             </intent-filter>
         </receiver>
     </application>

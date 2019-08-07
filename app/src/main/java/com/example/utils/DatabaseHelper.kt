@@ -83,7 +83,6 @@ class DatabaseHelper(var context: Context) :
         }
 
         db.close()
-
     }
 
 
@@ -117,13 +116,12 @@ class DatabaseHelper(var context: Context) :
         cv.put(NAME, name)
 
 
-        var i = db.update(TABLE_NAME, cv, UID + " =" + id, null)
+        var i = db.update(TABLE_NAME, cv, UID + " = " + id, null)
 
         if (i > 0) {
             Toast.makeText(context, "Succ", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show()
-
         }
 
 
